@@ -1,24 +1,112 @@
 import logo from './logo.svg';
-import './App.css';
+import * as React from 'react'
+import {NextUIProvider} from "@nextui-org/react";
+import Timer from './Timer'
+import TabItems from './TabItems'
+import TimerContext from './TimerContext'
+import {Card, CardBody} from "@nextui-org/react";
+import {Tabs, Tab} from "@nextui-org/react";
 
+const timerTypes = [
+  {
+    id: "pomodoro",
+    title: "Focus",
+    countDownTime: 1500
+  },
+  {
+    id: "short break",
+    title: "Short Break",
+    countDownTime: 300
+  },
+  {
+    id: "long break",
+    title: "Long Break",
+    countDownTime: 1200
+  },
+]
+
+function checkEndTime (secondsLeft) {
+    const now = new Date()
+      const time = now.getTime()
+      const remainingTime = time + (secondsLeft * 1000)
+      const endTime = new Date()
+      endTime.setTime(remainingTime)
+      return( endTime.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        }) )
+  }
+
+//Idea: Create a table list of the fully completed pomodoro timers with date
 function App() {
+  const [selectedTimer, setSelectedTimer] = React.useState("pomodoro")
+  const [pomodorosCompleted, setPomodorosCompleted] = React.useState(0)
+  const [isRunning, setIsRunning] = React.useState(false)
+  const [nextUp, setNextUp] = React.useState({
+    title: "",
+    time: 0,
+  })
+  const checkIfEvery4th = (pomodorosCompleted + 1) % 4
+
+  const checkNextSession = () => {
+    if(selectedTimer === "pomodoro") {
+      if(checkIfEvery4th===0) {
+        return timerTypes[2].title
+      } 
+      return timerTypes[1].title
+    }
+    return timerTypes[0].title
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <NextUIProvider>
+      <TimerContext.Provider value={{
+        selectedTimer, 
+        setSelectedTimer,
+        pomodorosCompleted,
+        setPomodorosCompleted,
+        isRunning,
+        setIsRunning,
+        setNextUp,
+        checkIfEvery4th, 
+        checkNextSession,
+        checkEndTime
+        }}>
+        <div className="flex flex-col gap-0 items-center py-24" style={{height:"100vh"}}>
+          <Card
+            className="w-[512px] pb-4 z-10"
+            shadow="none"
+          >
+            <CardBody>
+              <Tabs className="flex flex-col items-center" key="primary" color="primary" aria-label="Tabs colors" radius="full" selectedKey={selectedTimer}
+              onSelectionChange={setSelectedTimer}>
+              {timerTypes.map((timer) => {
+                return <Tab key={timer.id} title={timer.title} />
+              })}
+              </Tabs>
+            
+              {timerTypes.map((timer) => {
+                return <Timer id={timer.id} countDownTime={timer.countDownTime}/>
+              })}
+
+            </CardBody>
+          </Card>
+          {isRunning && <Card
+            className="bg-[#E7E7E7] w-[512px] z-0 -mt-8 mb-8 border-none"
+            shadow="none"
+          >
+            <CardBody
+              className="text-center pb-4 pt-12 text-l"
+            >
+              {
+                `Next up: ${nextUp.title} at ${nextUp.time} ${selectedTimer!=="pomodoro" ? "😤" : "🍵"}`  
+              }
+            </CardBody>
+          </Card>}
+          <p>test 12</p>
+        </div>
+      </TimerContext.Provider>
+    </NextUIProvider>
   );
 }
 
