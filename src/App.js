@@ -6,22 +6,28 @@ import TabItems from './TabItems'
 import TimerContext from './TimerContext'
 import {Card, CardBody} from "@nextui-org/react";
 import {Tabs, Tab} from "@nextui-org/react";
+import matcha from './media/matcha.svg'
+import lightning from './media/lightning.svg'
+
 
 const timerTypes = [
   {
     id: "pomodoro",
     title: "Focus",
-    countDownTime: 1500
+    countDownTime: 1500,
+    favicon: lightning
   },
   {
     id: "short break",
     title: "Short Break",
-    countDownTime: 300
+    countDownTime: 300,
+    favicon: matcha
   },
   {
     id: "long break",
     title: "Long Break",
-    countDownTime: 1200
+    countDownTime: 1200,
+    favicon: matcha
   },
 ]
 
@@ -86,7 +92,7 @@ function App() {
               </Tabs>
             
               {timerTypes.map((timer) => {
-                return <Timer id={timer.id} countDownTime={timer.countDownTime}/>
+                return <Timer id={timer.id} favicon={timer.favicon} countDownTime={timer.countDownTime}/>
               })}
 
             </CardBody>
@@ -96,14 +102,14 @@ function App() {
             shadow="none"
           >
             <CardBody
-              className="text-center pb-4 pt-12 text-l"
+              className="flex flex-row space-x-2 justify-center pb-4 pt-12 text-l"
             >
-              {
-                `Next up: ${nextUp.title} at ${nextUp.time} ${selectedTimer!=="pomodoro" ? "😤" : "🍵"}`  
-              }
+              {`Next up: ${nextUp.title} at`}  
+              <b>&nbsp;{nextUp.time}</b>
+              {selectedTimer==="pomodoro" ? <img className="h-6" src={matcha}></img> : <img className="h-6" src={lightning}></img>}
+              
             </CardBody>
           </Card>}
-          <p>test 12</p>
         </div>
       </TimerContext.Provider>
     </NextUIProvider>

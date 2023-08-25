@@ -12,7 +12,7 @@ function formatTime(time) {
   return(`${minute}:${seconds.toString().padStart(2, '0')}`)
 }
 
-function Timer( {id, countDownTime} ) {
+function Timer( {id, countDownTime, favicon} ) {
   const [seconds, setSeconds] = React.useState(countDownTime)
   const {selectedTimer, setSelectedTimer, pomodorosCompleted, setPomodorosCompleted, isRunning, setIsRunning, setNextUp, checkIfEvery4th, checkNextSession, checkEndTime} = React.useContext(TimerContext)
   const isSelected = selectedTimer === id
@@ -32,7 +32,12 @@ function Timer( {id, countDownTime} ) {
     }
     
   React.useEffect(() => {
-    document.title = formatTime(seconds);
+
+    if(selectedTimer === id) {
+      document.title = formatTime(seconds);
+    } else {
+      handleTimerReset()
+    }
 
     if(seconds===0) {
       handleTimerReset()
@@ -51,8 +56,6 @@ function Timer( {id, countDownTime} ) {
         audio1.play()
         setSelectedTimer(0)
       }
-    } else if (selectedTimer !== id) {
-      handleTimerReset()
     }
   }, [seconds, selectedTimer])
 
