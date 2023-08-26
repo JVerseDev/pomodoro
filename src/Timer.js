@@ -1,16 +1,10 @@
-import logo from './logo.svg';
 import * as React from 'react'
 import TimerContext from './TimerContext'
 import sound from './media/UIclick.mp3'
 import pomodoroSound from './media/Ping1.mp3'
 import breakSound from './media/Softchime.mp3'
 import {Button, CardBody} from "@nextui-org/react";
-
-function formatTime(time) {
-  const minute = Math.floor(time / 60)
-  const seconds = time % 60
-  return(`${minute}:${seconds.toString().padStart(2, '0')}`)
-}
+import { formatTime } from './utils'
 
 function Timer( {id, countDownTime, favicon} ) {
   const [seconds, setSeconds] = React.useState(countDownTime)
@@ -64,7 +58,8 @@ function Timer( {id, countDownTime, favicon} ) {
       const nextSession = checkNextSession()
       const endsIn = checkEndTime(seconds)
       setNextUp({
-        title: nextSession,
+        id: nextSession.id,
+        title: nextSession.title,
         time: endsIn,
       })
       refTimer.current = window.setInterval(()=> {
@@ -80,8 +75,6 @@ function Timer( {id, countDownTime, favicon} ) {
   }
   
   if(!isSelected) return null
-
-  //ADD the upcoming phase. "Next: Short Break @10:28AM 🍵" When paused it goes away, then press start it appears
 
   //create a handleSkip button, moves selectedTimer forward and adds pomodoro progress
   return (
