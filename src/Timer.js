@@ -8,7 +8,7 @@ import { formatTime } from './utils'
 
 function Timer( {id, countDownTime, favicon} ) {
   const [seconds, setSeconds] = React.useState(countDownTime)
-  const {selectedTimer, setSelectedTimer, pomodorosCompleted, setPomodorosCompleted, isRunning, setIsRunning, setNextUp, checkIfEvery4th, checkNextSession, checkEndTime} = React.useContext(TimerContext)
+  const {selectedTimer, setSelectedTimer, pomodorosCompleted, setPomodorosCompleted, isRunning, setIsRunning, setNextUp, checkIfEvery4th, checkNextSession, checkEndTime, tasks, handleUpdate, selectedTask} = React.useContext(TimerContext)
   const isSelected = selectedTimer === id
   const refTimer = React.useRef(null)
   //is there a way to clean this up?
@@ -24,7 +24,7 @@ function Timer( {id, countDownTime, favicon} ) {
       setIsRunning(false)
       setSeconds(countDownTime)
     }
-    
+  
   React.useEffect(() => {
 
     if(selectedTimer === id) {
@@ -38,6 +38,20 @@ function Timer( {id, countDownTime, favicon} ) {
       if(selectedTimer==="pomodoro"){
         audio0.play()
         setPomodorosCompleted(pomodorosCompleted + 1)
+
+        //handles the task selected, incrememnts completed pomodoros to 1
+        let updatedPomodoros = {}
+        tasks.map((task) => {
+          if(task.id === selectedTask.id) {
+            updatedPomodoros = task.pomodoros
+          }
+        })
+        const updatedTasks = handleUpdate(selectedTask.id, {pomodoros: {
+          ...updatedPomodoros,
+          completed: updatedPomodoros.completed + 1,
+        }})
+
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks))
 
         if(checkIfEvery4th===0) {
           console.log('4th one fired')
@@ -76,7 +90,7 @@ function Timer( {id, countDownTime, favicon} ) {
   
   if(!isSelected) return null
 
-  //create a handleSkip button, moves selectedTimer forward and adds pomodoro progress
+  //Create a functionality for auto start?
   return (
     <div className="flex flex-col items-center">
         <p className="mt-8 text-zinc-400 font-medium text-small">SESSION #{((selectedTimer==="short break" || selectedTimer==="long break")&& pomodorosCompleted>0)? pomodorosCompleted: pomodorosCompleted + 1}</p>

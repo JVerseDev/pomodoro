@@ -7,11 +7,28 @@ import TimerContext from './TimerContext'
 import FastForward from './media/FastForward'
 
 function Pomodoro({timerTypes}) {
-    const {selectedTimer, setSelectedTimer, isRunning, nextUp, pomodorosCompleted, setPomodorosCompleted} = React.useContext(TimerContext)
+    const {selectedTimer, setSelectedTimer, isRunning, nextUp, pomodorosCompleted, setPomodorosCompleted, tasks, handleUpdate, selectedTask} = React.useContext(TimerContext)
 
     const handleSkip = () => {
         setSelectedTimer(nextUp.id)
-        selectedTimer===timerTypes[0].id && setPomodorosCompleted(pomodorosCompleted + 1)
+        if(selectedTimer===timerTypes[0].id) {
+            setPomodorosCompleted(pomodorosCompleted + 1)
+
+            //handles the task selected, increments completed pomodoros to 1
+            let updatedPomodoros = {}
+            tasks.map((task) => {
+              if(task.id === selectedTask.id) {
+                updatedPomodoros = task.pomodoros
+              }
+            })
+            //TODO: include conditional here. only if the task has 1 or more total pomodoros, then you add
+            const updatedTasks = handleUpdate(selectedTask.id, {pomodoros: {
+              ...updatedPomodoros,
+              completed: updatedPomodoros.completed + 1,
+            }})
+            localStorage.setItem("tasks", JSON.stringify(updatedTasks))
+        }
+        
     }
 
     return (
@@ -29,7 +46,7 @@ function Pomodoro({timerTypes}) {
                 </Tabs>
             
                 {timerTypes.map((timer) => {
-                return <Timer id={timer.id} favicon={timer.favicon} countDownTime={timer.countDownTime}/>
+                return <Timer key={timer.id} id={timer.id} favicon={timer.favicon} countDownTime={timer.countDownTime}/>
                 })}
             </CardBody>
         </Card>

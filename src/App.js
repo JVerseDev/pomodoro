@@ -32,6 +32,7 @@ const timerTypes = [
 
 //Idea: Create a table list of the fully completed pomodoro timers with date
 function App() {
+  //timer
   const [selectedTimer, setSelectedTimer] = React.useState("pomodoro")
   const [pomodorosCompleted, setPomodorosCompleted] = React.useState(0)
   const [isRunning, setIsRunning] = React.useState(false)
@@ -41,6 +42,33 @@ function App() {
     time: 0,
   })
   const checkIfEvery4th = (pomodorosCompleted + 1) % 4
+  //tasks
+  const [tasks, setTasks] = React.useState([])
+  const [selectedTask, setSelectedTask] = React.useState({
+    id: '',
+    pomodoros: {
+      completed: 0,
+      total: 0,
+    }
+  })
+
+  React.useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks")
+    const parsedSavedTasks = JSON.parse(savedTasks)
+    if(parsedSavedTasks) {
+      setTasks(parsedSavedTasks)
+    }
+  }, [])
+  
+
+  //handle update for tasks
+  const handleUpdate = (id, updatedItem) => {
+    const updatedTasks = tasks.map((item) => {
+        return item.id===id ? {...item, ...updatedItem} : item
+    })
+    setTasks(updatedTasks)
+    return updatedTasks
+}
 
   const checkNextSession = () => {
     const handleReturn = (timerIndex) => {
@@ -72,10 +100,15 @@ function App() {
         checkIfEvery4th, 
         checkNextSession,
         checkEndTime,
+        tasks,
+        setTasks,
+        selectedTask,
+        setSelectedTask,
+        handleUpdate
         }}>
         <div className="h-screen">
           <Pomodoro timerTypes={timerTypes}/>
-
+          <Tasks />
         </div>
       </TimerContext.Provider>
     </NextUIProvider>
