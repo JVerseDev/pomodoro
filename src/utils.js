@@ -30,11 +30,21 @@ export function getTodaysDate() {
   let month = objectDate.getMonth() + 1;
   let year = objectDate.getFullYear();
 
+  const monthName = objectDate.toLocaleString('default', { month: 'short' });
+  const dayName = objectDate.toLocaleString('default', { weekday: 'long' });
+  
   if (month < 10) {
     month = `0${month}`;
-}
-  const todaysDate = year + "-" + month + "-" + day
+  }
+  //const todaysDate = year + "-" + month + "-" + day
+  const todaysDate = dayName + ', ' + monthName + ' ' + day
   return todaysDate
+}
+
+export function getTime() {
+  let objectDate = new Date();
+  const hours = objectDate.getHours()
+  return hours
 }
 
 

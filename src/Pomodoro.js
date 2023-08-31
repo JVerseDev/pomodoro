@@ -6,33 +6,62 @@ import lightning from './media/lightning.svg'
 import TimerContext from './TimerContext'
 import FastForward from './media/FastForward'
 
-function Pomodoro({timerTypes}) {
-    const {selectedTimer, setSelectedTimer, isRunning, nextUp, pomodorosCompleted, setPomodorosCompleted, tasks, handleUpdate, selectedTask} = React.useContext(TimerContext)
+function Pomodoro({timerTypes, addEventToCal, googleCalAvailable}) {
+    const {selectedTimer, setSelectedTimer, isRunning, nextUp, pomodorosCompleted, setPomodorosCompleted, tasks, handleUpdate, selectedTask, events, handleAddEvent, handleEventsUpdate, addEvent} = React.useContext(TimerContext)
+    const [eventTimeTracker, setEventTimeTracker] = React.useState({
+        timerType: selectedTimer,
+        timeStart: '',
+        hasPaused: false,
+    })
 
     const handleSkip = () => {
         setSelectedTimer(nextUp.id)
         if(selectedTimer===timerTypes[0].id) {
             setPomodorosCompleted(pomodorosCompleted + 1)
+            localStorage.setItem("pomodorosCompleted", (pomodorosCompleted + 1))
 
-            //handles the task selected, increments completed pomodoros to 1
+            //if there's a task selected, make a shallow copy of that task's pomodoro object
             let updatedPomodoros = {}
             tasks.map((task) => {
               if(task.id === selectedTask.id) {
                 updatedPomodoros = task.pomodoros
               }
             })
+
+            //if there's a task selected, then increments completed pomodoros to 1 for that task
             //TODO: include conditional here. only if the task has 1 or more total pomodoros, then you add
             const updatedTasks = handleUpdate(selectedTask.id, {pomodoros: {
               ...updatedPomodoros,
               completed: updatedPomodoros.completed + 1,
             }})
-            localStorage.setItem("tasks", JSON.stringify(updatedTasks))
+            localStorage.setItem("tasks", JSON.stringify(updatedTasks))    
+        }
+
+        //handle adding an event here and pushing to local storage. If google cal is authenticated, then push to google calendar
+        const now = new Date()
+        const startT = eventTimeTracker.timeStart
+        const endT = now 
+        const durationMins = ((endT - startT) / 60000)
+        const newEvent = {
+            id: now,
+            timerType: selectedTimer,
+            timeStart: eventTimeTracker.timeStart,
+            timeEnd: endT, 
+            duration: durationMins,
+        }
+        handleAddEvent(newEvent)
+
+        if(googleCalAvailable) {
+            addEventToCal(selectedTimer, startT, endT, durationMins, selectedTask)
         }
         
     }
 
+    console.log(events)
+
+    //reason why I can't put the buttons inside a ternary operator is because there's going to be an error when trying to reference and add event listener since it's not loaded on the dom yet
     return (
-    <div className="flex flex-col gap-0 items-center pt-24">
+    <div className="flex flex-col gap-0 items-center pt-12">
         <Card
         className="w-[512px] pb-4 z-10"
         shadow="none"
@@ -46,7 +75,7 @@ function Pomodoro({timerTypes}) {
                 </Tabs>
             
                 {timerTypes.map((timer) => {
-                return <Timer key={timer.id} id={timer.id} favicon={timer.favicon} countDownTime={timer.countDownTime}/>
+                return <Timer eventTimeTracker={eventTimeTracker} setEventTimeTracker= {setEventTimeTracker} key={timer.id} id={timer.id} favicon={timer.favicon} countDownTime={timer.countDownTime} addEventToCal={addEventToCal} googleCalAvailable={googleCalAvailable} />
                 })}
             </CardBody>
         </Card>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Card, CardBody, Button, Progress, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Checkbox, Input, Textarea} from "@nextui-org/react";
+import {Tooltip, Card, CardBody, Button, Progress, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Checkbox, Input, Textarea} from "@nextui-org/react";
 import Elipses from './media/Elipses'
 import { checkDueDate, getTodaysDate } from './utils';
 import TimerContext from './TimerContext';
@@ -92,7 +92,7 @@ function TaskItem({task, isNew, id, title, notes, isComplete, pomodoros, dueDate
      }
 
      const handleSelectedTask = () => {
-        setSelectedTask({id, pomodoros})
+        setSelectedTask({id, pomodoros, title})
      }
 
    
