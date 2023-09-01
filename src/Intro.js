@@ -44,9 +44,12 @@ function Intro( {pomodorosCompleted} ) {
     const getTotalFocusDuration = () => {
         let sumInMins = 0
         if(todaysEvents){
-            getFocusEvents(todaysEvents).map((event) => 
-            sumInMins += event.duration)
-            return (`Minutes Focused: ${sumInMins}`)
+            getFocusEvents(todaysEvents).map((event) => sumInMins += event.duration)
+            const hour = Math.floor(sumInMins / 60)
+            const mins = sumInMins % 60
+            const displayHours = `${hour} ${hour>1 ? ' hours' : ' hour'} ${mins.toString().padStart(2, '0')} ${sumInMins>1 ? ' mins' : ' min'}`
+            const displayMins = `${Math.floor(sumInMins)} ${sumInMins>1 ? ' mins' : ' min'}`
+            return (sumInMins < 60 ? displayMins : displayHours)
         }
 
         return ''
@@ -86,7 +89,7 @@ function Intro( {pomodorosCompleted} ) {
                    
                     </DropdownMenu>
                 </Dropdown>
-                <Tooltip content={getTotalFocusDuration()}>
+                <Tooltip content={`Total Focus Time: ${getTotalFocusDuration()}`}>
                     <Button className='bg-[#E4E4E7]'>Focus Sessions <b>{getFocusEvents(todaysEvents).length}</b> </Button>
                 </Tooltip>
                 <Button className='bg-[#E4E4E7]'> Tasks Completed <b>0</b></Button>
