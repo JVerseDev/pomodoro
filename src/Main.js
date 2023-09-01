@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gapi } from "gapi-script" //this was the differentiator. https://stateful.com/blog/google-calendar-react
-import {Button, CardBody, Tooltip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter} from "@nextui-org/react";
+import {Button, CardBody, Tooltip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input} from "@nextui-org/react";
 import Settings from './media/Settings';
 import Intro from './Intro'
 import Pomodoro from './Pomodoro';
@@ -16,7 +16,7 @@ function Main() {
   const signoutButtonRef = useRef();
   const [googleCalAvailable, setGoogleCalAvailable] = useState(false)
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-  const { pomodorosCompleted,  pomodoroEvents, timerTypes} = React.useContext(TimerContext)
+  const { pomodorosCompleted,  pomodoroEvents, timerTypes, handleDurations, handleResetSettings, isRunning} = React.useContext(TimerContext)
 
   
 
@@ -26,6 +26,7 @@ function Main() {
   const SCOPES = 'https://www.googleapis.com/auth/calendar';
 
 
+  //this is only firing on intial render. It could be disconnected by then?
   useEffect(() => {
     // Load the Google API client library
     const script = document.createElement('script');
@@ -123,9 +124,9 @@ function Main() {
           dateTime: endT,
           timeZone: "America/Los_Angeles",
         },
-        
+        colorID: "2"
       };
-    
+        
     try {
       const response = await window.gapi.client.calendar.events.insert({
         calendarId: 'primary', // Use 'primary' for the user's primary calendar
@@ -137,6 +138,8 @@ function Main() {
       console.error('Error creating event:', error);
     }
   };
+
+  
 
   //add subtle animation when google calendar is connected. Component loaded
   return (
@@ -163,18 +166,65 @@ function Main() {
             <ModalContent>
               {(onClose) => (
                 <>
-                  <ModalHeader className="flex flex-col gap-1">Google Calendar API</ModalHeader>
+                  <ModalHeader className="flex flex-col gap-1">Settings</ModalHeader>
+                  
                   <ModalBody>
+                    <div className='flex space-x-6'>
+                  <Input
+                    type="number"
+                    label="Focus Time"
+                    min="1"
+                    isDisabled={isRunning}
+                    placeholder="Focus Time"
+                    labelPlacement="outside"
+                    value={timerTypes[0].countDownTime / 60}
+                    onChange={(e) => handleDurations("pomodoro", (e.target.value * 60))}
+                    endContent={
+                      <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">min</span>
+                      </div>
+                    }
+                  />
+                    <Input
+                      type="number"
+                      label="Short Break"
+                      min="1"
+                      isDisabled={isRunning}
+                      placeholder="Short Break"
+                      labelPlacement="outside"
+                      value={timerTypes[1].countDownTime / 60}
+                      onChange={(e) => handleDurations("short break", (e.target.value * 60))}
+                      endContent={
+                        <div className="pointer-events-none flex items-center">
+                          <span className="text-default-400 text-small">min</span>
+                        </div>
+                      }
+                    />
+                      <Input
+                        type="number"
+                        label="Long Break"
+                        min="1"
+                        isDisabled={isRunning}
+                        placeholder="Long Break"
+                        labelPlacement="outside"
+                        value={timerTypes[2].countDownTime / 60}
+                        onChange={(e) => handleDurations("long break", (e.target.value * 60))}
+                        endContent={
+                          <div className="pointer-events-none flex items-center">
+                            <span className="text-default-400 text-small">min</span>
+                          </div>
+                        }
+                      />
+                    </div>
+                    <Button isDisabled={isRunning} color="danger" variant="light" onPress={handleResetSettings}>
+                      Reset
+                    </Button>
+                    <p className='text-sm'>Google Calendar</p>
                     <Button ref={authorizeButtonRef} onPress={handleAuthClick}>Authorize</Button>
                     <Button ref={signoutButtonRef} onPress={handleSignoutClick}>Sign Out</Button>
                   </ModalBody>
                   <ModalFooter>
-                    <Button color="danger" variant="light" onPress={onClose}>
-                      Close
-                    </Button>
-                    <Button color="primary" onPress={onClose}>
-                      Action
-                    </Button>
+                    
                   </ModalFooter>
                 </>
               )}

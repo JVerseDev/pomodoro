@@ -7,8 +7,9 @@ import {Button, CardBody, Tooltip, useDisclosure, Modal, ModalContent, ModalHead
 import { formatTime } from './utils'
 
 function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTracker, addEventToCal, googleCalAvailable} ) {
-  const [seconds, setSeconds] = React.useState(countDownTime)
-  const {selectedTimer, setSelectedTimer, pomodorosCompleted, setPomodorosCompleted, isRunning, setIsRunning, setNextUp, checkIfEvery4th, checkNextSession, checkEndTime, tasks, handleUpdate, selectedTask, events, handleAddEvent, handleEventsUpdate} = React.useContext(TimerContext)
+  //TODO: REASON WHY IT'S NOT CHANGING ON REFRESH IS BECAUSE this only get's set on first render
+  const [seconds, setSeconds] = React.useState(0)
+  const {timerTypes, selectedTimer, setSelectedTimer, pomodorosCompleted, setPomodorosCompleted, isRunning, setIsRunning, setNextUp, checkIfEvery4th, checkNextSession, checkEndTime, tasks, handleUpdate, selectedTask, events, handleAddEvent, handleEventsUpdate} = React.useContext(TimerContext)
   const isSelected = selectedTimer === id
   const refTimer = React.useRef(null)
   //for modal reset
@@ -23,7 +24,7 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
   React.useEffect(() => {
 
     if(selectedTimer === id) {
-      document.title = formatTime(seconds);
+      document.title = formatTime(countDownTime - seconds);
     } else {
       handleTimerReset()
       setEventTimeTracker({
@@ -34,14 +35,14 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
       })
     }
 
-    if(seconds===0) {
+    if((countDownTime - seconds) <= 0) {
       handleTimerReset()
 
       //handle adding an event here and pushing to local storage.
       const now = new Date()
       const startT = eventTimeTracker.timeStart
       const endT = now 
-      const durationMins = Math.round((endT - startT) / 60000)
+      const durationMins = Math.floor((endT - startT) / 60000)
       const newEvent = {
           id: now,
           timerType: selectedTimer,
@@ -88,13 +89,13 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
         setSelectedTimer(0)
       }
     }
-  }, [seconds, selectedTimer])
+  }, [seconds, selectedTimer, timerTypes])
 
 
   const handleStartTimer = () => {
     if(isRunning===false) {
       const nextSession = checkNextSession()
-      const endsIn = checkEndTime(seconds)
+      const endsIn = checkEndTime(countDownTime - seconds)
       setNextUp({
         id: nextSession.id,
         title: nextSession.title,
@@ -103,7 +104,7 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
 
       //timer countdown
       refTimer.current = window.setInterval(()=> {
-        setSeconds((s)=> s - 1)
+        setSeconds((s)=> s + 1)
       }, 1000)
       setIsRunning(true)
 
@@ -134,7 +135,7 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
     window.clearInterval(refTimer.current)
       refTimer.current=null
       setIsRunning(false)
-      setSeconds(countDownTime)
+      setSeconds(0)
     }
   
 
@@ -178,7 +179,7 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
           )}
         </ModalContent>
       </Modal>
-        <h1 className="font-medium" style={{fontSize:"120px"}}>{formatTime(seconds)}</h1>
+        <h1 className="font-medium" style={{fontSize:"120px"}}>{formatTime(countDownTime - seconds)}</h1>
         <Button size="lg" style={{width:"256px"}} color="primary" onClick={handleStartTimer}>{isRunning ? "Pause" : "Start"}</Button>
     </div>
   );

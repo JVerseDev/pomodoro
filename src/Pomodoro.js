@@ -6,8 +6,8 @@ import lightning from './media/lightning.svg'
 import TimerContext from './TimerContext'
 import FastForward from './media/FastForward'
 
-function Pomodoro({timerTypes, addEventToCal, googleCalAvailable}) {
-    const {selectedTimer, setSelectedTimer, isRunning, nextUp, pomodorosCompleted, setPomodorosCompleted, tasks, handleUpdate, selectedTask, events, handleAddEvent, handleEventsUpdate, addEvent} = React.useContext(TimerContext)
+function Pomodoro({addEventToCal, googleCalAvailable}) {
+    const {timerTypes, selectedTimer, setSelectedTimer, isRunning, nextUp, pomodorosCompleted, setPomodorosCompleted, tasks, handleUpdate, selectedTask, events, handleAddEvent, handleEventsUpdate, addEvent} = React.useContext(TimerContext)
     const [eventTimeTracker, setEventTimeTracker] = React.useState({
         timerType: selectedTimer,
         timeStart: '',
@@ -41,7 +41,7 @@ function Pomodoro({timerTypes, addEventToCal, googleCalAvailable}) {
         const now = new Date()
         const startT = eventTimeTracker.timeStart
         const endT = now 
-        const durationMins = Math.round((endT - startT) / 60000)
+        const durationMins = Math.floor((endT - startT) / 60000)
         const newEvent = {
             id: now,
             timerType: selectedTimer,
@@ -56,8 +56,6 @@ function Pomodoro({timerTypes, addEventToCal, googleCalAvailable}) {
         }
         
     }
-
-    console.log(events)
 
     //reason why I can't put the buttons inside a ternary operator is because there's going to be an error when trying to reference and add event listener since it's not loaded on the dom yet
     return (

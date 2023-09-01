@@ -9,31 +9,30 @@ import matcha from './media/matcha.svg'
 import lightning from './media/lightning.svg'
 import { checkEndTime } from './utils'
 
-const timerTypes = [
-  {
-    id: "pomodoro",
-    title: "Focus Time",
-    countDownTime: 1500,
-    favicon: lightning
-  },
-  {
-    id: "short break",
-    title: "Short Break",
-    countDownTime: 300,
-    favicon: matcha
-  },
-  {
-    id: "long break",
-    title: "Long Break",
-    countDownTime: 1200,
-    favicon: matcha
-  },
-]
-
-
 //Idea: Create a table list of the fully completed pomodoro timers with date
 function App() {
   //timer
+  const [timerLoaded, setTimerLoaded] = React.useState(false)
+  const [timerTypes, setTimerTypes] = React.useState([
+      {
+        id: "pomodoro",
+        title: "Focus Time",
+        countDownTime: 1500,
+        favicon: lightning
+      },
+      {
+        id: "short break",
+        title: "Short Break",
+        countDownTime: 300,
+        favicon: matcha
+      },
+      {
+        id: "long break",
+        title: "Long Break",
+        countDownTime: 1200,
+        favicon: matcha
+      },
+    ])
   const [selectedTimer, setSelectedTimer] = React.useState("pomodoro")
   const [pomodorosCompleted, setPomodorosCompleted] = React.useState(0)
   const [isRunning, setIsRunning] = React.useState(false)
@@ -59,6 +58,13 @@ function App() {
 
 
   React.useEffect(() => {
+    //gets saved timerType durations
+    const savedTimerTypes = localStorage.getItem("timerTypes")
+    const parsedTimerTypes = JSON.parse(savedTimerTypes)
+    if(savedTimerTypes) {
+      setTimerTypes(parsedTimerTypes)
+    }
+
     //gets # of saved pomodoros 
     const savedPomodoros = localStorage.getItem("pomodorosCompleted")
     const parsedSavedPomodoros = JSON.parse(savedPomodoros)
@@ -80,6 +86,44 @@ function App() {
       setEvents(parsedSavedEvents)
     }
   }, [])
+
+  //handles duration changes in the setting
+  const handleDurations = (id, updatedDuration) => {
+    const updatedDurations = timerTypes.map((item) => {
+        return item.id===id ? {...item, countDownTime: updatedDuration} : item
+    })
+    setTimerTypes(updatedDurations)
+    localStorage.setItem("timerTypes", JSON.stringify(updatedDurations))
+    return handleDurations
+  }
+
+
+  //handles settings timer reset
+  const handleResetSettings = () => {
+    const defaultTimers = [
+      {
+        id: "pomodoro",
+        title: "Focus Time",
+        countDownTime: 1500,
+        favicon: lightning
+      },
+      {
+        id: "short break",
+        title: "Short Break",
+        countDownTime: 300,
+        favicon: matcha
+      },
+      {
+        id: "long break",
+        title: "Long Break",
+        countDownTime: 1200,
+        favicon: matcha
+      },
+    ]
+    setTimerTypes(defaultTimers)
+    localStorage.setItem("timerTypes", JSON.stringify(defaultTimers))
+  }
+
 
 
   //events tracker
@@ -110,9 +154,6 @@ const handleDeleteEvent = (id) => {
     //localStorage.setItem("tasks", JSON.stringify(newTasks))
 }
 
-
-  console.log(selectedTask)
-
   //checks next session when user clicks on start 
   const checkNextSession = () => {
     const handleReturn = (timerIndex) => {
@@ -140,6 +181,23 @@ const handleDeleteEvent = (id) => {
     return updatedTasks
 }
 
+  //TODO: create a function that will filter and check if they match today's date. You will get number of pomodoros back + total duration for the day
+  const todaysEvents = events.filter((event) => {
+    const now = new Date()
+    const dateToday = now.getDate()
+    const monthToday = now.getMonth()
+    const nowFormatted = monthToday + "-" + dateToday
+
+    const eventDate = (new Date(event.timeEnd)).getDate()
+    const eventMonth = (new Date(event.timeEnd)).getMonth()
+    const eventFormatted = eventMonth + "-" + eventDate
+
+    return (eventFormatted === nowFormatted)
+  })
+
+  const getFocusEvents = (eventsArray) => {
+    return eventsArray.filter((event) => event.timerType === "pomodoro")
+  }
 
 
   return (
@@ -164,7 +222,11 @@ const handleDeleteEvent = (id) => {
         handleUpdate,
         events,
         handleAddEvent,
-        handleEventsUpdate
+        handleEventsUpdate,
+        handleDurations,
+        handleResetSettings,
+        todaysEvents,
+        getFocusEvents
         }}>
         <div className="h-screen">
           <Main pomodoroEvents={events} />
