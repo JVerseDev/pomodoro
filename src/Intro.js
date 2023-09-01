@@ -47,7 +47,7 @@ function Intro( {pomodorosCompleted} ) {
             getFocusEvents(todaysEvents).map((event) => sumInMins += event.duration)
             const hour = Math.floor(sumInMins / 60)
             const mins = sumInMins % 60
-            const displayHours = `${hour} ${hour>1 ? ' hours' : ' hour'} ${mins.toString().padStart(2, '0')} ${sumInMins>1 ? ' mins' : ' min'}`
+            const displayHours = `${hour} ${hour>1 ? ' hours' : ' hour'} ${Math.floor(mins)} ${sumInMins>1 ? ' mins' : ' min'}`
             const displayMins = `${Math.floor(sumInMins)} ${sumInMins>1 ? ' mins' : ' min'}`
             return (sumInMins < 60 ? displayMins : displayHours)
         }
