@@ -112,7 +112,7 @@ function Main() {
   const addEvent = async(selectedTimer, startT, endT, durationMins, selectedTask) => {
       const event = {
 
-        summary: selectedTimer + 'for ' + durationMins + 'mins',
+        summary: selectedTimer + ' for ' + durationMins + 'mins',
         description: ' Task: ' + selectedTask.title + ' ' + `Pomodoros: ${selectedTask.pomodoros.completed} / ${selectedTask.pomodoros.total}`, 
         location: "",
         start: {

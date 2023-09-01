@@ -41,7 +41,7 @@ function Pomodoro({timerTypes, addEventToCal, googleCalAvailable}) {
         const now = new Date()
         const startT = eventTimeTracker.timeStart
         const endT = now 
-        const durationMins = ((endT - startT) / 60000)
+        const durationMins = Math.round((endT - startT) / 60000)
         const newEvent = {
             id: now,
             timerType: selectedTimer,
