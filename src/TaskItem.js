@@ -48,7 +48,7 @@ function TaskItem({task, isNew, id, title, notes, isComplete, pomodoros, dueDate
      }
 
      const handleHasDueDate = () => {
-        const timeRemaining = checkDueDate(getTodaysDate())
+        const timeRemaining = checkDueDate(getTodaysDate().numFormat)
         handleUpdate(id, {dueDate:{
             hasDueDate: !dueDate.hasDueDate,
             ...timeRemaining,
@@ -94,6 +94,8 @@ function TaskItem({task, isNew, id, title, notes, isComplete, pomodoros, dueDate
      const handleSelectedTask = () => {
         setSelectedTask({id, pomodoros, title})
      }
+
+     console.log(dueDate)
 
    
     //put line clamps here later for notes and title

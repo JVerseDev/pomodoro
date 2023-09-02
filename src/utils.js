@@ -36,9 +36,13 @@ export function getTodaysDate() {
   if (month < 10) {
     month = `0${month}`;
   }
-  //const todaysDate = year + "-" + month + "-" + day
+  if (day < 10) {
+    day = `0${day}`;
+  }
+
+  const numFormat = year + "-" + month + "-" + day
   const todaysDate = dayName + ', ' + monthName + ' ' + day
-  return todaysDate
+  return { todaysDate, numFormat }
 }
 
 export function getTime() {

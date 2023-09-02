@@ -58,7 +58,7 @@ function Intro( {pomodorosCompleted} ) {
 
     return (
         <div className="flex flex-col items-center">
-            <p className='mt-8'>{getTodaysDate()}</p>
+            <p className='mt-8'>{getTodaysDate().todaysDate}</p>
             <h1 className="text-3xl mt-2">{timeOfDay()}</h1>
 
             <ButtonGroup className="mt-4" radius="full">
