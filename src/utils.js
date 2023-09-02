@@ -12,7 +12,7 @@ export function checkEndTime (secondsLeft) {
 
 export function checkDueDate (dueDate) {
   const now = new Date()
-  const due = new Date(dueDate + "T00:00:00")
+  const due = new Date(dueDate + "T00:030:00")
   const remainingTime = due - now
   const daysLeft = Math.ceil(remainingTime / 86400000)
   const hoursLeft = remainingTime / 3600000

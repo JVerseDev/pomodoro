@@ -17,7 +17,7 @@ function App() {
       {
         id: "pomodoro",
         title: "Focus Time",
-        countDownTime: 1500,
+        countDownTime: 5,
         favicon: lightning
       },
       {
@@ -71,6 +71,7 @@ function App() {
     if(savedPomodoros) {
       setPomodorosCompleted(parsedSavedPomodoros)
     }
+    console.log(parsedSavedPomodoros)
 
     //gets saved tasks
     const savedTasks = localStorage.getItem("tasks")

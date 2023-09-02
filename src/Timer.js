@@ -62,7 +62,8 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
       if(selectedTimer==="pomodoro"){
         audio0.play()
         setPomodorosCompleted(pomodorosCompleted + 1)
-
+        localStorage.setItem("pomodorosCompleted", JSON.stringify(pomodorosCompleted + 1))
+        
         //handles the task selected, incrememnts completed pomodoros to 1
         let updatedPomodoros = {}
         tasks.map((task) => {
@@ -76,7 +77,6 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
         }})
 
         localStorage.setItem("tasks", JSON.stringify(updatedTasks))
-        localStorage.setItem("pomodorosCompleted", JSON.stringify(updatedPomodoros.completed + 1))
 
         if(checkIfEvery4th===0) {
           setSelectedTimer("long break")
@@ -143,8 +143,6 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
     setPomodorosCompleted(0)
     localStorage.setItem("pomodorosCompleted", 0)
   }
-
-
   
   if(!isSelected) return null
 
