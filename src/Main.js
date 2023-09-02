@@ -97,6 +97,7 @@ function Main() {
     });
   };
 
+
   /* old - still works 
   const addEvent = async(calendarID, event) => {
     const request = await gapi.client.calendar.events.insert({
@@ -113,7 +114,7 @@ function Main() {
   const addEvent = async(selectedTimer, startT, endT, durationMins, selectedTask) => {
       const event = {
 
-        summary: selectedTimer + ' for ' + durationMins + 'mins',
+        summary: selectedTimer + ' for ' + durationMins + ' mins',
         description: ' Task: ' + selectedTask.title + ' ' + `Pomodoros: ${selectedTask.pomodoros.completed} / ${selectedTask.pomodoros.total}`, 
         location: "",
         start: {

@@ -17,7 +17,7 @@ function App() {
       {
         id: "pomodoro",
         title: "Focus Time",
-        countDownTime: 5,
+        countDownTime: 1500,
         favicon: lightning
       },
       {
