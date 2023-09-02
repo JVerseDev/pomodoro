@@ -54,15 +54,22 @@ function Timer( {id, countDownTime, favicon, eventTimeTracker, setEventTimeTrack
 
       console.log(googleCalAvailable)
 
+      /* Note: If I want all timer types to registered in google calendar
+       *
       if(googleCalAvailable) {
-        console.log('fired')
         addEventToCal(selectedTimer, startT, endT, durationMins, selectedTask)
       }
+      */
 
       if(selectedTimer==="pomodoro"){
         audio0.play()
         setPomodorosCompleted(pomodorosCompleted + 1)
         localStorage.setItem("pomodorosCompleted", JSON.stringify(pomodorosCompleted + 1))
+
+        //pushes pomodoro focus session to google calendar
+        if(googleCalAvailable) {
+          addEventToCal("Focus Time", startT, endT, durationMins, selectedTask)
+        }
         
         //handles the task selected, incrememnts completed pomodoros to 1
         let updatedPomodoros = {}
