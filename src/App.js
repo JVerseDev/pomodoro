@@ -89,7 +89,12 @@ function App() {
   }, [])
 
   //handles duration changes in the setting
+  //TODO create a conditional here that catches "0" and empty functions
   const handleDurations = (id, updatedDuration) => {
+
+    if(updatedDuration === 0 || updatedDuration == null) {
+      return
+    }
     const updatedDurations = timerTypes.map((item) => {
         return item.id===id ? {...item, countDownTime: updatedDuration} : item
     })

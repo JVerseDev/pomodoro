@@ -51,8 +51,8 @@ function Pomodoro({addEventToCal, googleCalAvailable}) {
         }
         handleAddEvent(newEvent)
 
-        if(googleCalAvailable) {
-            addEventToCal(selectedTimer, startT, endT, durationMins, selectedTask)
+        if(selectedTimer === "pomodoro" && googleCalAvailable) {
+            addEventToCal("Focus Time", startT, endT, durationMins, selectedTask)
         }
         
     }

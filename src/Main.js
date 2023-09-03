@@ -136,6 +136,7 @@ function Main() {
 
       console.log('Event created:', response.result);
     } catch (error) {
+      console.log("this is the error: " + error)
       console.error('Error creating event:', error);
     }
   };
