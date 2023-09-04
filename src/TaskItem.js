@@ -93,6 +93,7 @@ function TaskItem({task, isNew, id, title, notes, isComplete, pomodoros, dueDate
 
      const handleSelectedTask = () => {
         setSelectedTask({id, pomodoros, title})
+        localStorage.setItem("selectedTask", JSON.stringify({id, pomodoros, title}))
      }
 
      console.log(dueDate)

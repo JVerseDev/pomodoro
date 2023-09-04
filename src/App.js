@@ -80,6 +80,13 @@ function App() {
       setTasks(parsedSavedTasks)
     }
 
+    //gets saved selected task
+    const savedSelectedTask = localStorage.getItem("selectedTask")
+    const parsedSelectedTask = JSON.parse(savedSelectedTask)
+    if(parsedSelectedTask) {
+      setSelectedTask(parsedSelectedTask)
+    }
+
     //gets saved events
     const savedEvents = localStorage.getItem("events")
     const parsedSavedEvents = JSON.parse(savedEvents)
